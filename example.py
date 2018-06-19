@@ -36,7 +36,7 @@ if __name__ == "__main__":
     ## These can either be `ionic-protected-*` prefixed so Ionic.com can't see them, and only other requestors who
     ##  access the key can; or they can be unencrypted so that Ionic.com can use their values in policy decisions.
     dictKeyAttrs = {
-        'classification': 'Public',
+        'classification': ['Public'],
         'ionic-protected-test': ['encrypted_value_1']
     }
     created_keys = create_keys(ionic_sep, dictKeyAttrs)
