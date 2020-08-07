@@ -5,15 +5,14 @@
 # using built-in and 3rd-party libraries instead of the   #
 # Ionic SDK.                                              #
 #                                                         #
-# This example uses Python 3.4.3                          #
+# This example uses Python 3.4.3 or higher.               #
 # This example is best read with syntax highlighting on.  #
 #                                                         #
-# (c) 2017 Ionic Security Inc.                            #
+# (c) 2017-2020 Ionic Security Inc.                       #
 # Confidential and Proprietary                            #
 # By using this code, I agree to the Terms & Conditions   #
 #  (https://www.ionic.com/terms-of-use/) and the Privacy  #
 #  Policy (https://www.ionic.com/privacy-notice/)         #
-# Author = daniel/rmspeers, QA = jmassey                  #
 ###########################################################
 
 import base64
@@ -303,12 +302,15 @@ def create_key_transaction(ionic_sep, dictKeyAttrs, dictMetadata, send_full_hfp=
     ### Handling the Key Create Response ###
     ########################################
     # Assume the response from Ionic is a successful 200, and we have created keys with the provided attributes.
-    assert (key_create_response.status_code == 200) or (key_create_response.status_code == 401)
+    status_code = key_create_response.status_code
+    assert (status_code == 200) or (status_code == 201), "\nKey Create response status code: %d\n" % status_code
 
     return key_create_response, cid, b64encoded_signed_attributes_iv_cipher_text_aad_as_string
 
 
 def create_keys(ionic_sep, dictKeyAttrs = {}, dictMetadata = {}):
+    # See https://dev.ionic.com/api/device/create-key for more information on key create.
+
     key_create_response, cid, b64encoded_signed_attributes_iv_cipher_text_aad_as_string = create_key_transaction(ionic_sep, dictKeyAttrs, dictMetadata)
     decrypted_envelope, response_cid = utilities.decrypt_envelope(ionic_sep, key_create_response, cid)
 
