@@ -5,7 +5,7 @@
 # using builtin and 3rd-party libraries instead of the     #
 # Ionic SDK.                                               #
 #                                                          #
-# (c) 2017 Ionic Security Inc.                             #
+# (c) 2017-2020 Ionic Security Inc.                        #
 # Confidential and Proprietary                             #
 # By using this code, I agree to the Terms & Conditions    #
 #  (https://www.ionic.com/terms-of-use/) and the Privacy   #

@@ -5,10 +5,10 @@
 # using built-in and 3rd-party libraries instead of the   #
 # Ionic SDK.                                              #
 #                                                         #
-# This example uses Python 3.4.3                          #
+# This example uses Python 3.4.3 or higher.               #
 # This example is best read with syntax highlighting on.  #
 #                                                         #
-# (c) 2017 Ionic Security Inc.                            #
+# (c) 2017-2020 Ionic Security Inc.                       #
 # Confidential and Proprietary                            #
 # By using this code, I agree to the Terms & Conditions   #
 #  (https://www.ionic.com/terms-of-use/) and the Privacy  #
@@ -41,15 +41,23 @@ def make_cid(device_id):
 
 
 def decrypt_envelope(ionic_sep, server_response, cid):
-    response_body = server_response.json()
+    #######################################
+    ### Handling the Key Fetch Response ###
+    #######################################
+
+    # See https://dev.ionic.com/api/device/get-key for more information on key fetch.
+
+    key_fetch_response_body = server_response.json()
 
     # As a precaution, ensure that the client's CID is the same as the response's CID.
-    response_cid = response_body['cid']
+    response_cid = key_fetch_response_body['cid']
     if cid != response_cid:
         raise ValueError("The CID in the response did not match the one from the request.")
 
     # Base 64 decode the envelope's value.
-    decoded_response_envelope_as_bytes = base64.b64decode(response_body['envelope'])
+    decoded_response_envelope_as_bytes = base64.b64decode(key_fetch_response_body['envelope'])
+    # Prepare to decrypt the `envelope` contents.
+
     # Prepare to decrypt the `envelope` contents.
 
     # Obtain the initialization vector which is the first 16 bytes.
@@ -64,15 +72,15 @@ def decrypt_envelope(ionic_sep, server_response, cid):
     # Construct a cipher to decrypt the data.
     cipher = Cipher(algorithms.AES(ionic_sep.aesCdIdcKey),
                     modes.GCM(initialization_vector_from_response_envelope,
-                    gcm_tag_from_response_envelope),
+                              gcm_tag_from_response_envelope),
                     backend=default_backend()
                     ).decryptor()
 
     # Set the cipher's `aad` as the value of the `cid`
     cipher.authenticate_additional_data(response_cid.encode(encoding='utf-8'))
-    decrypted_key_response_bytes = cipher.update(cipher_text_from_response_envelope) + cipher.finalize()
 
     # Decrypt the ciphertext.
+    decrypted_key_response_bytes = cipher.update(cipher_text_from_response_envelope) + cipher.finalize()
     decrypted_envelope = json.loads(decrypted_key_response_bytes.decode(encoding='utf-8'))
 
     return decrypted_envelope, response_cid

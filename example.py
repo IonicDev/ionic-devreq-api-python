@@ -5,17 +5,17 @@
 # using built-in and 3rd-party libraries instead of the   #
 # Ionic SDK.                                              #
 #                                                         #
-# This example uses Python 3.4.3                          #
+# This example uses Python 3.4.3 or higher.               #
 # This example is best read with syntax highlighting on.  #
 #                                                         #
-# (c) 2017 Ionic Security Inc.                            #
+# (c) 2017-2020 Ionic Security Inc.                       #
 # Confidential and Proprietary                            #
 # By using this code, I agree to the Terms & Conditions   #
 #  (https://www.ionic.com/terms-of-use/) and the Privacy  #
 #  Policy (https://www.ionic.com/privacy-notice/)         #
-# Author = rmspeers, QA =                                 #
 ###########################################################
 
+import os
 from keys import create_keys, fetch_keys
 from persistors import ProfilePersistorPlaintext
 
@@ -29,8 +29,12 @@ from persistors import ProfilePersistorPlaintext
 
 
 if __name__ == "__main__":
-    persistor = ProfilePersistorPlaintext('profiles.pt')
+    persistor_path = os.path.expanduser("~/.ionicsecurity/profiles.pt")
+    persistor = ProfilePersistorPlaintext(persistor_path)
     ionic_sep = persistor.get_active_profile()
+    print("")
+    print("Current Device ID: " + getattr(ionic_sep, "deviceId"))
+    print("")
 
     # Best practice is to include key attributes to describe the type of data you will be using this key to protect:
     ## These can either be `ionic-protected-*` prefixed so Ionic.com can't see them, and only other requestors who
@@ -41,6 +45,7 @@ if __name__ == "__main__":
     }
     created_keys = create_keys(ionic_sep, dictKeyAttrs)
     print('Created keys: {}'.format(created_keys))
+    print("")
 
     # Now we show fetching one of these keys back:
     # NOTE: We may or may not be able to get it depending on the current data policy.

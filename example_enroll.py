@@ -5,18 +5,18 @@
 # using built-in and 3rd-party libraries instead of the   #
 # Ionic SDK.                                              #
 #                                                         #
-# This example uses Python 3.4.3                          #
+# This example uses Python 3.4.3 or higher.               #
 # This example is best read with syntax highlighting on.  #
 #                                                         #
-# (c) 2017 Ionic Security Inc.                            #
+# (c) 2017-2020 Ionic Security Inc.                       #
 # Confidential and Proprietary                            #
 # By using this code, I agree to the Terms & Conditions   #
 #  (https://www.ionic.com/terms-of-use/) and the Privacy  #
 #  Policy (https://www.ionic.com/privacy-notice/)         #
-# Author = rmspeers, QA = jmassey                         #
 ###########################################################
 
 import sys
+import os
 
 from registration import create_device
 from registration import get_ionic_token
@@ -42,8 +42,10 @@ password = r""
 stoken = ""
 uidauth = ""
 
-api_url = "https://dev-api.ionic.com"
-enrollment_server_url = "https://dev-enrollment.ionic.com"
+# These URLs are valid if you obtained your tenant using Start for Free, https://ionic.com/start-for-free/.
+# Modify the keyspace to the keyspace of your tenant.
+api_url = "https://api.ionic.com"
+enrollment_server_url = "https://enrollment.ionic.com"
 keyspace = "ABcd"
 
 
@@ -68,6 +70,7 @@ if __name__ == "__main__":
     # NOTE: This will overwrite any existing content at that path.
     persistor = ProfilePersistorPlaintext()
     persistor.add_sep(sep, set_as_active=True)
-    persistor.set_file_path("profiles.pt")
+    persistor_path = os.path.expanduser("~/.ionicsecurity/profiles.pt")
+    persistor.set_file_path(persister_path)
     print(persistor)
     persistor.save_to_json()

@@ -5,15 +5,14 @@
 # using built-in and 3rd-party libraries instead of the   #
 # Ionic SDK.                                              #
 #                                                         #
-# This example uses Python 3.4.3                          #
+# This example uses Python 3.4.3 or higher.               #
 # This example is best read with syntax highlighting on.  #
 #                                                         #
-# (c) 2017 Ionic Security Inc.                            #
+# (c) 2017-2020 Ionic Security Inc.                       #
 # Confidential and Proprietary                            #
 # By using this code, I agree to the Terms & Conditions   #
 #  (https://www.ionic.com/terms-of-use/) and the Privacy  #
 #  Policy (https://www.ionic.com/privacy-notice/)         #
-# Author = rmspeers, QA = jmassey                         #
 ###########################################################
 
 import json

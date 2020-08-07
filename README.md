@@ -2,18 +2,24 @@
 
 ## Explanation
 
-This example code shows how to use the advanced Device Request APIs available from the Ionic Platform.
+This example code shows how to use the advanced [Device Request APIs](https://dev.ionic.com/api/device) available from the Machina Platform.
 It is meant to serve as sample code for developers learning about those APIs to use as reference.
 
-Most developers will instead prefer to use Ionic's supported SDKs, which include a Python SDK which has the same
- functionality shown in these examples, as well as significant additional features.
+Most developers will instead prefer to use [Ionic's supported SDK](https://dev.ionic.com/sdk/features), which include a Python SDK which has the same
+ functionality shown in these examples, as well as significant additional features. There are SDK examples for [Create Key](https://dev.ionic.com/sdk/tasks/create-key?language=python) and [Get Key](https://dev.ionic.com/sdk/tasks/get-key?language=python).
 
 ## Setting up Environment
+
+You will need to obtain a tenant. A free tenant can be obtained [here](https://ionic.com/start-for-free/). By following the prompted path, your
+device will be enrolled.
+
+## Setting up Development Environment
 
 You may want to use Python's virtualenv toolkit to manage your environment.
 
 Once loaded, install the pre-requisites:
-```bash
+
+```
 pip install -r requirements.txt
 ```
 
@@ -21,19 +27,21 @@ pip install -r requirements.txt
 
 ### Create and Fetch Keys:
 
-The `example.py` tool shows how to create keys, and then request them again.
+The `example.py` sample shows how to create keys, and then request them again.
 These two operations are usually done independently.
 
-Using this example requires a Secure Enrollment Profile (SEP), which it expects via the plaintext profile persistor in a file `profiles.pt`.
+Using this example requires a Secure Enrollment Profile (SEP), which it expects via the plaintext profile persistor in a file `$HOME/.ionicsecurity/profiles.pt`.
 Read [Enrollment Overview](https://dev.ionic.com/registration.html) to learn more.
-See the Enrollment Example for obtaining one if you don't have one via another mechanism.
+See **Enrolling** below if you didn't enroll via another mechanism.
 
-### Enrolling:
+This example shows how to use the [Create Key API](https://dev.ionic.com/api/device/create-key) and the [Get Key API](https://dev.ionic.com/api/device/get-key).
+
+### Enrolling
 
 The `example_enroll.py` tool shows enrolling a device and obtaining a SEP, and then storing it using the plaintext profile persistor.
 
 Using this example requires first editing the code to define the correct values for the variables.
-After setting those values, it can be run and will produce `profiles.pt` which is the SEP stored in plaintext.
+After setting those values, it can be run and will produce `$HOME/.ionicsecurity/profiles.pt` which is the SEP stored in plaintext.
 
 There are two options for setting the values:
 

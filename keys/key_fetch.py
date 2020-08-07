@@ -5,15 +5,14 @@
 # using built-in and 3rd-party libraries instead of the   #
 # Ionic SDK.                                              #
 #                                                         #
-# This example uses Python 3.4.3                          #
+# This example uses Python 3.4.3 or higher.               #
 # This example is best read with syntax highlighting on.  #
 #                                                         #
-# (c) 2017 Ionic Security Inc.                            #
+# (c) 2017-2020 Ionic Security Inc.                       #
 # Confidential and Proprietary                            #
 # By using this code, I agree to the Terms & Conditions   #
 #  (https://www.ionic.com/terms-of-use/) and the Privacy  #
 #  Policy (https://www.ionic.com/privacy-notice/)         #
-# Author = daniel, QA = jmassey                           #
 ###########################################################
 
 import base64
@@ -131,57 +130,19 @@ def fetch_key_request(ionic_sep, protection_keys, external_id=None, send_full_hf
                                        headers={'Content-Type': 'application/json'})
 
     # Assume the response from Ionic is a successful 200 and that we have received keys for the provided key tags.
-    assert (key_fetch_response.status_code == 200) or (key_fetch_response.status_code == 401)
+    status_code = key_fetch_response.status_code
+    assert (status_code == 200) or (status_code == 201), "\nKey Fetch response status code: %d\n" % status_code
 
     return key_fetch_response, cid
-
-
-def decrypt_envelope(ionic_sep, key_fetch_response, cid):
-    #######################################
-    ### Handling the Key Fetch Response ###
-    #######################################
-
-    key_fetch_response_body = key_fetch_response.json()
-
-    # As a precaution, ensure that the client's CID is the same as the response's CID.
-    response_cid = key_fetch_response_body['cid']
-    assert cid == response_cid
-
-    # Base 64 decode the envelope's value.
-    decoded_key_fetch_response_envelope_as_bytes = base64.b64decode(key_fetch_response_body['envelope'])
-
-    # Prepare to decrypt the `envelope` contents.
-
-    # Obtain the initialization vector which is the first 16 bytes.
-    initialization_vector_from_response_envelope = decoded_key_fetch_response_envelope_as_bytes[:16]
-
-    # Obtain the data to decrypt which is the bytes between the initializaiton vector and the tag.
-    cipher_text_from_response_envelope = decoded_key_fetch_response_envelope_as_bytes[16:-16]
-
-    # Obtain the tag which is the last 16 bytes.
-    gcm_tag_from_response_envelope = decoded_key_fetch_response_envelope_as_bytes[-16:]
-
-    # Construct a cipher to decrypt the data.
-    cipher = Cipher(algorithms.AES(ionic_sep.aesCdIdcKey),
-                    modes.GCM(initialization_vector_from_response_envelope,
-                              gcm_tag_from_response_envelope),
-                    backend=default_backend()
-                    ).decryptor()
-
-    # Set the cipher's `aad` as the value of the `cid`.
-    cipher.authenticate_additional_data(response_cid.encode(encoding='utf-8'))
-
-    # Decrypt the ciphertext.
-    decrypted_key_response_bytes = cipher.update(cipher_text_from_response_envelope) + cipher.finalize()
-    decrypted_envelope = json.loads(decrypted_key_response_bytes.decode(encoding='utf-8'))
-
-    return decrypted_envelope
 
 
 def fetch_keys(ionic_sep, protection_keys, external_ids=None):
     ##########################################
     ### Constructing the Key Fetch Request ###
     ##########################################
+
+    # See https://dev.ionic.com/api/device/get-key for more information on key fetch.
+
     example_key_fetch_body = """
     {
       "cid": "CID|MfyG..A.ec095b70-c1d0-4ac0-9d0f-2cafa82b8a1f|1487622171374|1487622171374|5bFnTQ==",
@@ -216,7 +177,7 @@ def fetch_keys(ionic_sep, protection_keys, external_ids=None):
                 "the full HFP included.")
 
             key_fetch_response, cid = fetch_key_request(ionic_sep, protection_keys, send_full_hfp=True)
-            decrypted_envelope = decrypt_envelope(ionic_sep, key_fetch_response, cid)
+            decrypted_envelope, _ = utilities.decrypt_envelope(ionic_sep, key_fetch_response, cid)
 
     # Pull out any query results as well to return:
     query_results = decrypted_envelope['data'].get('query-results')
