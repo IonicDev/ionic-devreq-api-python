@@ -1,6 +1,6 @@
 appdirs==1.4.4
 cffi==1.14.0
-cryptography==2.9.2
+cryptography==3.2
 idna==2.10
 packaging==20.4
 pyasn1==0.4.8
